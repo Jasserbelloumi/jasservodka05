@@ -2,10 +2,11 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+from selenium_stealth import stealth
 import time
 import requests
+import random
 
-# --- إعدادات OpenRouter ---
 API_KEY = "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"
 
 def get_ai_reply(text):
@@ -14,23 +15,28 @@ def get_ai_reply(text):
     try:
         r = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
         return r.json()['choices'][0]['message']['content']
-    except: return "خطأ في الاتصال بالذكاء الاصطناعي"
+    except: return "AI Error"
 
-# --- إعداد متصفح Selenium بمحاكاة آيفون 14 برو ---
 chrome_options = Options()
-chrome_options.add_argument("--headless")  # تشغيل بدون واجهة رسومية (ضروري للسيرفر)
+chrome_options.add_argument("--headless")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
-chrome_options.add_argument("--disable-blink-features=AutomationControlled") # لإخفاء أن المتصفح آلي
+chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+chrome_options.add_experimental_option('useAutomationExtension', False)
 
-# محاكاة iPhone 14 Pro
-user_agent = "Mozilla/5.0 (iPhone15,3; U; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
-chrome_options.add_argument(f"user-agent={user_agent}")
-
-# تشغيل المتصفح
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
-# الكوكيز الخاصة بك
+# --- تفعيل نظام التخفي (Stealth) بمواصفات iPhone 14 Pro ---
+stealth(driver,
+    user_agent= "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1",
+    languages=["ar-DZ", "ar", "en-US", "en"],
+    vendor="Apple Computer, Inc.",
+    platform="iPhone",
+    webgl_vendor="Apple Inc.",
+    renderer="Apple GPU",
+    fix_hairline=True,
+)
+
 cookies = [
     {'name': 'datr', 'value': 'djlYaSWDVXfRAaW4HwDnRzJC'},
     {'name': 'sb', 'value': 'djlYaY9VCkdqBEUGOLihycfc'},
@@ -40,37 +46,33 @@ cookies = [
 ]
 
 def start_bot():
-    print("🚀 جاري البدء بمحاكاة iPhone 14 Pro على سيرفر GitHub...")
+    print("🕵️ تفعيل بصمة iPhone 14 Pro المتقدمة...")
     try:
         driver.get("https://m.facebook.com")
-        time.sleep(3)
+        time.sleep(random.uniform(2, 5))
         
-        # إضافة الكوكيز
         for cookie in cookies:
             driver.add_cookie(cookie)
         
         driver.refresh()
-        time.sleep(5)
+        time.sleep(random.uniform(5, 8))
         
-        if "c_user" in driver.page_source or "61583389620613" in driver.page_source:
-            print("✅ تم تسجيل الدخول بنجاح عبر Selenium!")
+        if "c_user" in driver.page_source:
+            print("✅ الدخول ناجح: البصمة مطابقة للجهاز الحقيقي.")
         else:
-            print("❌ فشل تسجيل الدخول. قد تحتاج لكوكيز جديدة أو موافقة من الحساب.")
-            # طباعة جزء من محتوى الصفحة لمعرفة الخطأ (Checkpoint مثلاً)
+            print("❌ فشل الدخول: قد تحتاج لتحديث الكوكيز.")
             return
 
-        print("📡 البوت يراقب الرسائل الآن (mbasic)...")
         while True:
+            # محاكاة سلوك بشري: لا يفتح الصفحة كل ثانية بل بشكل عشوائي
             driver.get("https://mbasic.facebook.com/messages/?unread=1")
-            time.sleep(10)
+            print(f"👁️ فحص الرسائل في: {time.strftime('%H:%M:%S')}")
             
-            # هنا يمكنك إضافة كود البحث عن الرسائل والرد عليها
-            # Selenium سيقوم بفتح كل رسالة وكتابة الرد كأنك شخص حقيقي
-            print("👁️ يتم فحص البريد الوارد...")
-            time.sleep(60) 
+            # تأخير عشوائي طويل قليلاً لتجنب كشف السيرفر
+            time.sleep(random.randint(45, 90))
             
     except Exception as e:
-        print(f"⚠️ حدث خطأ: {e}")
+        print(f"⚠️ خطأ: {e}")
     finally:
         driver.quit()
 
