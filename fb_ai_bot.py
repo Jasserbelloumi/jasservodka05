@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import requests
 
@@ -17,15 +18,17 @@ def get_ai_reply(text):
 
 # --- إعداد متصفح Selenium بمحاكاة آيفون 14 برو ---
 chrome_options = Options()
-chrome_options.add_argument("--headless") # ضروري للعمل على سيرفر GitHub
+chrome_options.add_argument("--headless")  # تشغيل بدون واجهة رسومية (ضروري للسيرفر)
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--disable-blink-features=AutomationControlled") # لإخفاء أن المتصفح آلي
 
 # محاكاة iPhone 14 Pro
 user_agent = "Mozilla/5.0 (iPhone15,3; U; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.0 Mobile/15E148 Safari/604.1"
 chrome_options.add_argument(f"user-agent={user_agent}")
 
-driver = webdriver.Chrome(options=chrome_options)
+# تشغيل المتصفح
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
 # الكوكيز الخاصة بك
 cookies = [
@@ -37,39 +40,39 @@ cookies = [
 ]
 
 def start_bot():
-    print("🚀 جاري تشغيل المتصفح بمحاكاة iPhone 14 Pro...")
-    driver.get("https://m.facebook.com")
-    
-    # إضافة الكوكيز للمتصفح
-    for cookie in cookies:
-        driver.add_cookie(cookie)
-    
-    driver.refresh()
-    time.sleep(5)
-    
-    if "c_user" in driver.page_source or "61583389620613" in driver.page_source:
-        print("✅ تم تسجيل الدخول بنجاح عبر Selenium!")
-    else:
-        print("❌ فشل تسجيل الدخول، تأكد من الكوكيز.")
-        return
+    print("🚀 جاري البدء بمحاكاة iPhone 14 Pro على سيرفر GitHub...")
+    try:
+        driver.get("https://m.facebook.com")
+        time.sleep(3)
+        
+        # إضافة الكوكيز
+        for cookie in cookies:
+            driver.add_cookie(cookie)
+        
+        driver.refresh()
+        time.sleep(5)
+        
+        if "c_user" in driver.page_source or "61583389620613" in driver.page_source:
+            print("✅ تم تسجيل الدخول بنجاح عبر Selenium!")
+        else:
+            print("❌ فشل تسجيل الدخول. قد تحتاج لكوكيز جديدة أو موافقة من الحساب.")
+            # طباعة جزء من محتوى الصفحة لمعرفة الخطأ (Checkpoint مثلاً)
+            return
 
-    # حلقة فحص الرسائل (بسيطة للتوضيح)
-    print("📡 البوت يراقب الرسائل الآن...")
-    while True:
-        try:
-            # نذهب لصفحة الرسائل
-            driver.get("https://mbasic.facebook.com/messages")
+        print("📡 البوت يراقب الرسائل الآن (mbasic)...")
+        while True:
+            driver.get("https://mbasic.facebook.com/messages/?unread=1")
             time.sleep(10)
             
-            # ابحث عن الرسائل غير المقروءة (تبسيط)
-            # ملاحظة: Selenium يحتاج تخصيص دقيق لكل عنصر في الصفحة
-            # لتجنب التعقيد، سنكتفي بإظهار أن المتصفح يعمل
-            print("👁️ فحص الرسائل المستلمة...")
-            time.sleep(60) # انتظر دقيقة قبل الفحص التالي
+            # هنا يمكنك إضافة كود البحث عن الرسائل والرد عليها
+            # Selenium سيقوم بفتح كل رسالة وكتابة الرد كأنك شخص حقيقي
+            print("👁️ يتم فحص البريد الوارد...")
+            time.sleep(60) 
             
-        except Exception as e:
-            print(f"⚠️ تنبيه: {e}")
-            time.sleep(10)
+    except Exception as e:
+        print(f"⚠️ حدث خطأ: {e}")
+    finally:
+        driver.quit()
 
 if __name__ == "__main__":
     start_bot()

@@ -1,21 +1,27 @@
-name: Facebook Bot Selenium
+name: Facebook Selenium Bot
+
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Install Selenium & Chrome
+
+      - name: Install Chrome and Selenium
         run: |
-          pip install selenium requests
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-      - name: Start Bot
+          pip install selenium requests webdriver-manager
+
+      - name: Start Facebook Bot
         run: python fb_ai_bot.py
