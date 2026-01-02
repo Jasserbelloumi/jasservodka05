@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 from fbchat import Client
 from fbchat.models import Message
 
@@ -19,15 +20,11 @@ def get_ai_response(user_text):
         "messages": [{"role": "user", "content": user_text}]
     }
     try:
-        res = requests.post(AI_URL, headers=headers, json=data)
-        if res.status_code == 200:
-            return res.json()['choices'][0]['message']['content']
-        else:
-            return "عذراً، هناك مشكلة في الاتصال بالذكاء الاصطناعي حالياً."
-    except Exception as e:
-        return f"خطأ تقني: {str(e)}"
+        res = requests.post(AI_URL, headers=headers, json=data, timeout=30)
+        return res.json()['choices'][0]['message']['content']
+    except:
+        return "عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي."
 
-# --- إعدادات بوت فيسبوك ---
 class JasserBot(Client):
     def onMessage(self, author_id, message_object, thread_id, thread_type, **kwargs):
         if author_id == self.uid:
@@ -35,13 +32,12 @@ class JasserBot(Client):
         msg_text = message_object.text
         if msg_text and msg_text.lower().startswith("/bot"):
             query = msg_text.replace("/bot", "").strip()
-            print(f"📥 تم استلام طلب: {query}")
-            self.markAsRead(thread_id)
+            print(f"📥 Received query: {query}")
             ai_reply = get_ai_response(query)
             self.send(Message(text=ai_reply), thread_id=thread_id, thread_type=thread_type)
-            print("✅ تم إرسال الرد بنجاح.")
+            print("✅ Replied successfully.")
 
-# --- تسجيل الدخول بالكوكيز ---
+# الكوكيز الخاصة بك
 session_cookies = {
     "datr": "djlYaSWDVXfRAaW4HwDnRzJC",
     "sb": "djlYaY9VCkdqBEUGOLihycfc",
@@ -51,9 +47,8 @@ session_cookies = {
 }
 
 try:
-    print("⏳ جاري محاولة الدخول إلى فيسبوك...")
     client = JasserBot("", "", session_cookies=session_cookies)
-    print("🚀 البوت متصل الآن!")
+    print("🚀 Bot is running on GitHub Actions...")
     client.listen()
 except Exception as e:
-    print(f"❌ فشل تسجيل الدخول: {e}")
+    print(f"❌ Error: {e}")
