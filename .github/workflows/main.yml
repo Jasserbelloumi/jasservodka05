@@ -1,4 +1,4 @@
-name: Facebook Bot Deploy
+name: Facebook Bot Selenium
 on:
   push:
     branches: [ main ]
@@ -12,9 +12,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Install Dependencies
+      - name: Install Selenium & Chrome
         run: |
-          pip install requests
-          pip install fbchat-v2  # النسخة المستقرة
-      - name: Start Facebook Bot
+          pip install selenium requests
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+      - name: Start Bot
         run: python fb_ai_bot.py
