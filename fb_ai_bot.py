@@ -22,7 +22,7 @@ def get_ai_response(text):
             timeout=30
         )
         return r.json()["choices"][0]["message"]["content"]
-    except Exception as e:
+    except Exception:
         return "⚠️ AI غير متاح حالياً"
 
 class AI_Bot(Client):
@@ -41,17 +41,26 @@ class AI_Bot(Client):
                 thread_type=thread_type
             )
 
-# -------- Facebook Cookies Login --------
+# -------- Facebook Cookies (NEW) --------
 cookies = {
     "datr": "djlYaSWDVXfRAaW4HwDnRzJC",
     "sb": "djlYaY9VCkdqBEUGOLihycfc",
+    "m_pixel_ratio": "2.4000000953674316",
+    "wd": "1080x2220",
     "c_user": "61583389620613",
     "xs": "46:Nt3_BIQ-BFtnTA:2:1767389625:-1:-1",
-    "fr": "0J9fq3YSiqTzy4W1C.AWe0mfjubjlGoGxNUjzxGYjHQ1eEQlxWZn0RpizM_e6t_jk9mxs.BpWDl2..AAA.0.0.BpWDnB.AWfNEWXdC3yKlH20IGtB1PYHzSQ"
+    "fr": "0J9fq3YSiqTzy4W1C.AWe0mfjubjlGoGxNUjzxGYjHQ1eEQlxWZn0RpizM_e6t_jk9mxs.BpWDl2..AAA.0.0.BpWDnB.AWfNEWXdC3yKlH20IGtB1PYHzSQ",
+    "locale": "ar_AR",
+    "pas": "61583389620613:ZiAyxlQkAJ",
+    "wl_cbv": "v2;client_version:3038;timestamp:1767389633"
 }
 
 try:
-    bot = AI_Bot("", "", session_cookies=cookies)
+    bot = AI_Bot(
+        "", "",
+        session_cookies=cookies,
+        user_agent="Mozilla/5.0 (Linux; Android 10; SM-A920F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+    )
     print("✅ BOT STARTED SUCCESSFULLY")
     bot.listen()
 except Exception as e:
