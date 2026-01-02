@@ -3,7 +3,7 @@ name: Facebook Bot Deploy
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # يتيح لك تشغيله يدوياً من الموقع
+  workflow_dispatch:
 
 jobs:
   run-bot:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Install Libraries
         run: |
-          pip install requests fbchat-v2
+          pip install requests fbchat
 
       - name: Start Facebook Bot
         run: python fb_ai_bot.py
