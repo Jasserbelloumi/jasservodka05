@@ -3,7 +3,7 @@ from fbchat import Client
 from fbchat.models import Message
 
 # -------- OpenRouter API --------
-API_KEY = "sk-or-v1-ضع_مفتاحك_هنا"
+API_KEY = "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"
 
 def get_ai_response(text):
     try:
@@ -43,11 +43,11 @@ class AI_Bot(Client):
 
 # -------- Facebook Cookies Login --------
 cookies = {
-    "datr": "ضع_dat_r",
-    "sb": "ضع_sb",
-    "c_user": "ضع_c_user",
-    "xs": "ضع_xs",
-    "fr": "ضع_fr"
+    "datr": "djlYaSWDVXfRAaW4HwDnRzJC",
+    "sb": "djlYaY9VCkdqBEUGOLihycfc",
+    "c_user": "61583389620613",
+    "xs": "46:Nt3_BIQ-BFtnTA:2:1767389625:-1:-1",
+    "fr": "0J9fq3YSiqTzy4W1C.AWe0mfjubjlGoGxNUjzxGYjHQ1eEQlxWZn0RpizM_e6t_jk9mxs.BpWDl2..AAA.0.0.BpWDnB.AWfNEWXdC3yKlH20IGtB1PYHzSQ"
 }
 
 try:
