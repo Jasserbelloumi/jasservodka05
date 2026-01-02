@@ -1,44 +1,34 @@
 import requests
 import json
-import time
 from fbchat import Client
 from fbchat.models import Message
 
-# --- إعدادات OpenRouter ---
+# --- OpenRouter Setup ---
 API_KEY = "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"
-AI_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 def get_ai_response(user_text):
-    headers = {
-        "Authorization": f"Bearer {API_KEY}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost",
-        "X-Title": "FB-AI-Bot"
-    }
+    headers = {"Authorization": f"Bearer {API_KEY}", "Content-Type": "application/json"}
     data = {
         "model": "openai/gpt-3.5-turbo", 
         "messages": [{"role": "user", "content": user_text}]
     }
     try:
-        res = requests.post(AI_URL, headers=headers, json=data, timeout=30)
+        res = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=data)
         return res.json()['choices'][0]['message']['content']
     except:
-        return "عذراً، حدث خطأ في الاتصال بالذكاء الاصطناعي."
+        return "AI Error"
 
 class JasserBot(Client):
     def onMessage(self, author_id, message_object, thread_id, thread_type, **kwargs):
-        if author_id == self.uid:
-            return
-        msg_text = message_object.text
-        if msg_text and msg_text.lower().startswith("/bot"):
-            query = msg_text.replace("/bot", "").strip()
-            print(f"📥 Received query: {query}")
-            ai_reply = get_ai_response(query)
-            self.send(Message(text=ai_reply), thread_id=thread_id, thread_type=thread_type)
-            print("✅ Replied successfully.")
+        if author_id == self.uid: return
+        msg = message_object.text
+        if msg and msg.lower().startswith("/bot"):
+            query = msg.replace("/bot", "").strip()
+            reply = get_ai_response(query)
+            self.send(Message(text=reply), thread_id=thread_id, thread_type=thread_type)
 
-# الكوكيز الخاصة بك
-session_cookies = {
+# Cookies dictionary
+cookies = {
     "datr": "djlYaSWDVXfRAaW4HwDnRzJC",
     "sb": "djlYaY9VCkdqBEUGOLihycfc",
     "c_user": "61583389620613",
@@ -47,9 +37,8 @@ session_cookies = {
 }
 
 try:
-    # استخدام نسخة مطورة من تسجيل الدخول بالكوكيز
-    client = JasserBot("", "", session_cookies=session_cookies)
-    print("🚀 Bot is connected and listening...")
+    client = JasserBot("", "", session_cookies=cookies)
+    print("✅ Bot is online!")
     client.listen()
 except Exception as e:
-    print(f"❌ Login Failed: {e}")
+    print(f"❌ Error: {e}")
