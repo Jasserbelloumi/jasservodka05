@@ -19,7 +19,8 @@ jobs:
 
       - name: Install Libraries
         run: |
-          pip install requests fbchat
+          pip install requests
+          pip install git+https://github.com/m-remi/fbchat-v2.git
 
       - name: Start Facebook Bot
         run: python fb_ai_bot.py

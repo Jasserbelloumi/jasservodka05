@@ -47,9 +47,9 @@ session_cookies = {
 }
 
 try:
-    # ملاحظة: في fbchat العادية، نحتاج أحياناً لتمرير user_agent
-    client = JasserBot("", "", session_cookies=session_cookies, user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
-    print("🚀 Bot is starting on GitHub Actions...")
+    # استخدام نسخة مطورة من تسجيل الدخول بالكوكيز
+    client = JasserBot("", "", session_cookies=session_cookies)
+    print("🚀 Bot is connected and listening...")
     client.listen()
 except Exception as e:
-    print(f"❌ Error: {e}")
+    print(f"❌ Login Failed: {e}")
