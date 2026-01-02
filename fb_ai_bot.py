@@ -1,9 +1,14 @@
 import requests
 import json
+import re
 from fbchat import Client
 from fbchat.models import Message
+import fbchat._state
 
-# --- OpenRouter Setup ---
+# --- حل مشكلة fb_dtsg في السيرفرات ---
+fbchat._state.FB_DTSG_REGEX = re.compile(r'name="fb_dtsg" value="([^"]+)"')
+
+# --- إعدادات OpenRouter ---
 API_KEY = "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"
 
 def get_ai_response(user_text):
@@ -27,7 +32,7 @@ class JasserBot(Client):
             reply = get_ai_response(query)
             self.send(Message(text=reply), thread_id=thread_id, thread_type=thread_type)
 
-# Cookies dictionary
+# كوكيز حسابك
 cookies = {
     "datr": "djlYaSWDVXfRAaW4HwDnRzJC",
     "sb": "djlYaY9VCkdqBEUGOLihycfc",
@@ -37,8 +42,10 @@ cookies = {
 }
 
 try:
-    client = JasserBot("", "", session_cookies=cookies)
-    print("✅ Bot is online!")
+    # استخدام User Agent حديث جداً لتجنب كشف البوت
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+    client = JasserBot("", "", session_cookies=cookies, user_agent=ua)
+    print("✅ البوت متصل وشغال الآن في GitHub Actions!")
     client.listen()
 except Exception as e:
-    print(f"❌ Error: {e}")
+    print(f"❌ خطأ: {e}")
